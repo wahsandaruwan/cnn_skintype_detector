@@ -1,9 +1,11 @@
 import os
+import uuid
 
 from UseModel import get_skin_type
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from json import JSONEncoder
+from werkzeug.utils import secure_filename
 
 # App initalization
 app = Flask(__name__)
@@ -21,11 +23,15 @@ def index():
     file = request.files["file"]
     if file.filename == "":
         return jsonify({"error": "No image selected"}), 400
+    
+    # Generate a secure unique file name
+    filename = uuid.uuid4().hex+"_"+secure_filename(file.filename)
+
     # Save the file
-    file.save(os.path.join(app.config["UPLOAD_FOLDER"], file.filename))
+    file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
     # Get the skin type
-    skin_type = get_skin_type("./Uploads/"+file.filename)
+    skin_type = get_skin_type("./Uploads/"+filename)
 
     return jsonify({"skin_type": skin_type}), 200
 

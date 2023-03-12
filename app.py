@@ -2,17 +2,19 @@ import os
 import uuid
 
 from UseModel import get_skin_type
+from PreProcessImage import pre_process_img
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from json import JSONEncoder
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+# Load environmental variables
+load_dotenv()
 
 # App initalization
 app = Flask(__name__)
 CORS(app)
-
-# Upload folder
-app.config["UPLOAD_FOLDER"] = "./Uploads"
 
 # Initial GET route
 @app.route('/predict', methods=['POST'])
@@ -28,10 +30,13 @@ def index():
     filename = uuid.uuid4().hex+"_"+secure_filename(file.filename)
 
     # Save the file
-    file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+    file.save(os.path.join(os.getenv("UP_INIT_DIR"), filename))
+
+    # Pre-process the image
+    new_filename = pre_process_img(os.getenv("UP_INIT_DIR")+filename)
 
     # Get the skin type
-    skin_type = get_skin_type("./Uploads/"+filename)
+    skin_type = get_skin_type(os.getenv("UP_PP_DIR")+new_filename)
 
     return jsonify({"skin_type": skin_type}), 200
 

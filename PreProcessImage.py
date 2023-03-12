@@ -26,4 +26,7 @@ def pre_process_img(img_path):
     new_filename = uuid.uuid4().hex+"_final.jpg"
     cv2.imwrite(os.getenv("UP_PP_DIR")+new_filename, reduce_ill_img)
 
+    # Remove inital image file
+    os.remove(img_path)
+
     return new_filename

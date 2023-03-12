@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 from keras.models import load_model
@@ -17,6 +18,9 @@ def get_skin_type(img_path):
 
   # Get the prediction
   pred = np.argmax(model.predict(input_arr))
+
+  # Remove preprocessed image file
+  os.remove(img_path)
 
   # Display the output
   if pred == 0:

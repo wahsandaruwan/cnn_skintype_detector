@@ -16,7 +16,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Initial GET route
+# Initial POST route
 @app.route('/predict', methods=['POST'])
 def index():
     # Validate the image file
